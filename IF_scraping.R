@@ -50,4 +50,3 @@ for (page in sitePages) {
 }
 
 write.csv(jTab, "jTabIF.csv")
-
