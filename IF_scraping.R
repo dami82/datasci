@@ -3,6 +3,7 @@
 ##  Damiano Fantini
 ##  Web Scraping: extract IF data from the web (http://www.citefactor.org/)
 ##
+## http://www.biotechworld.it/bioinf/2016/01/02/scraping-impact-factor-data-from-the-web-using-httr-and-regex-in-r/
 
 library(httr)
 setwd("~/")
