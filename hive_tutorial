@@ -1,0 +1,67 @@
+# Cloudera-quickstart-vm-5.4.2-0-vmware
+# Getting Started with Hive
+#
+# damiano fantini - student at UCI:SCI_X425.18 - 3/4/2016
+
+mysql --user=root --password=cloudera
+
+SHOW DATABASES;
+use retail_db;
+SHOW TABLES;
+DESCRIBE products;
+select * from products LIMIT 5;
+
+DESCRIBE categories;
+select * from categories LIMIT 5;
+quit;
+
+sqoop import \
+--connect jdbc:mysql://localhost/retail_db \
+--table categories --fields-terminated-by '\t' \
+--username root --password cloudera
+
+#output was:
+#16/03/04 13:34:24 INFO mapreduce.ImportJobBase: Transferred 1.0049 KB in 73.4839 seconds (14.0031 bytes/sec)
+#16/03/04 13:34:24 INFO mapreduce.ImportJobBase: Retrieved 58 records.
+
+sqoop import \
+--connect jdbc:mysql://localhost/retail_db \
+--table products \
+--columns "product_id,product_category_id,product_name,product_price" \
+--fields-terminated-by '\t' \
+--username root --password cloudera
+
+#output was:
+#16/03/04 14:15:11 INFO mapreduce.ImportJobBase: Transferred 68.7168 KB in 53.2642 seconds (1.2901 KB/sec)
+#16/03/04 14:15:11 INFO mapreduce.ImportJobBase: Retrieved 1345 records.
+
+#examine data in HDFS
+hadoop fs -cat products/part-m-00000 | head
+hadoop fs -cat categories/part-m-00000 | head
+
+#look for new folders
+hadoop fs -ls /user/cloudera/
+
+#play around in hive
+hive
+
+CREATE EXTERNAL TABLE products
+(pr_id INT, cat_id INT, pr_name STRING, price DOUBLE)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+LOCATION '/user/cloudera/products';
+
+CREATE EXTERNAL TABLE categories
+(cat_id INT, dep_id INT, cat_name STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+LOCATION '/user/cloudera/categories';
+
+show tables;
+
+DESCRIBE products;
+DESCRIBE categories;
+
+select * from products LIMIT 10;
+select * from products WHERE pr_name LIKE 'Nike%' LIMIT 10; 
+select * from products WHERE pr_name LIKE '%Under Armour%' SORT BY pr_price DESC LIMIT 20; 
+select p.pr_id, p.pr_name, p.price, c.cat_name from products p JOIN categories c ON (p.cat_id = c.cat_id) where p.price > 350 ORDER BY p.pr_name LIMIT 50;
+quit;
