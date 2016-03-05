@@ -62,6 +62,6 @@ DESCRIBE categories;
 
 select * from products LIMIT 10;
 select * from products WHERE pr_name LIKE 'Nike%' LIMIT 10; 
-select * from products WHERE pr_name LIKE '%Under Armour%' SORT BY pr_price DESC LIMIT 20; 
+select * from products WHERE pr_name LIKE '%Under Armour%' SORT BY price DESC LIMIT 20; 
 select p.pr_id, p.pr_name, p.price, c.cat_name from products p JOIN categories c ON (p.cat_id = c.cat_id) where p.price > 350 ORDER BY p.pr_name LIMIT 50;
 quit;
